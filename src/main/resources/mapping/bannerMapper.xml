@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.pro.banner.mapper.BannerMapper">
+
+    <resultMap id="result" type="com.example.pro.banner.entity.Banner">
+        <result property="id" column="id" />
+        <result property="title" column="title"/>
+        <result property="img" column="img"/>
+        <result property="link" column="link"/>
+        <result property="createTime" column="createTime" javaType="java.util.Date"/>
+        <result property="lastModify" column="lastModify"/>
+        <result property="status" column="status"/>
+    </resultMap>
+    <select id="findAll" resultType="com.example.pro.banner.entity.Banner" parameterType="com.example.pro.banner.entity.Banner">
+        select * from banner where 1=1 
+        <if test="status != 0">
+            and status=#{status}
+        </if>
+    </select>
+    <select id="findById" resultType="com.example.pro.banner.entity.Banner" parameterType="Integer">
+        select * from banner where id=#{id};
+    </select>
+    <insert id="create" useGeneratedKeys="true" keyProperty="id">
+        insert into banner (img, link, status, title) values(#{img},
+        <if test="link != null">
+            #{link}
+        </if>
+        <if test="link == null">
+            ''
+        </if>
+        , #{status},
+        <if test="title != null">
+            #{title}
+        </if>
+        <if test="title == null">
+            ''
+        </if>
+        )
+    </insert>
+    <update id="modify" parameterType="com.example.pro.banner.entity.Banner" useGeneratedKeys="true" keyProperty="id">
+    update banner set img=#{img}, link=#{link}, status=#{status}, title=#{title} where id=#{id}; 
+    </update>
+    <update id="delete" parameterType="Integer" useGeneratedKeys="true" keyProperty="id">
+    delete from banner where id=#{id}; 
+    </update>
+</mapper>
