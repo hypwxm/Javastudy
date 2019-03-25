@@ -5,16 +5,15 @@ import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
-
 public class Banner implements Serializable {
     private static final long serialVersionUID = 2278835641341997452L;
     private int id;
     private String img;
     private String title;
     private String link;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")  
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date createTime;
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")  
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private Date lastModify;
     private byte status;
 
@@ -74,8 +73,8 @@ public class Banner implements Serializable {
         this.status = status;
     }
 
-    @Override
-    public String toString() {
-        return getTitle();
-    }
+    /*
+     * @Override public String toString() { String str = new StringBuffer();
+     * str.format("{}", args) }
+     */
 }

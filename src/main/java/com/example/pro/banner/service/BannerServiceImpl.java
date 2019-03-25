@@ -2,6 +2,7 @@ package com.example.pro.banner.service;
 
 import java.util.List;
 
+import com.alibaba.fastjson.JSON;
 import com.example.pro.banner.entity.Banner;
 import com.example.pro.banner.mapper.BannerMapper;
 import com.github.pagehelper.PageHelper;
@@ -12,13 +13,17 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-@CacheConfig(cacheNames = "bannerCache")  // 定义这个注解，这个类里面的所有方法的缓存都属于这个缓存组，类方法的注解可以不加value，省事
+@CacheConfig(cacheNames = "bannerCache") // 定义这个注解，这个类里面的所有方法的缓存都属于这个缓存组，类方法的注解可以不加value，省事
 public class BannerServiceImpl implements BannerService {
     @Autowired
     private BannerMapper bannerMapper;
+
+    @Autowired
+    private RedisTemplate<String, Object> redisTemplate;
 
     @Cacheable
     public PageInfo<Banner> findAll(Banner banner) {
@@ -31,15 +36,35 @@ public class BannerServiceImpl implements BannerService {
         return pageInfo;
     }
 
-
-    @Cacheable(key = "#id")
+    // @Cacheable(key = "#id")
     public Banner findById(Integer id) {
+
+        String bannerStr = (String) redisTemplate.opsForValue().get("bannerCache::" + id);
+        System.out.println("adadad" + bannerStr);
+        if (bannerStr != null) {
+            Banner cacheBanner = new Banner();
+            cacheBanner = JSON.parseObject(bannerStr, Banner.class);
+            if (cacheBanner.getCreateTime() != null) {
+                System.out.println("数据来自缓存");
+                return cacheBanner;
+            }
+        }
+
+        Banner banner = bannerMapper.findById(id);
+
+        redisTemplate.opsForValue().set("bannerCache::" + banner.getId(), JSON.toJSONString(banner));
+
+
         return bannerMapper.findById(id);
     }
 
-    @Cacheable(key = "#p0")
-    public Integer create(Banner banner) {
-        return bannerMapper.create(banner);
+    // @Cacheable(key = "#p0")
+    public Banner create(Banner banner) {
+        bannerMapper.create(banner);
+        System.out.println(JSON.toJSONString(banner));
+
+        redisTemplate.opsForValue().set("bannerCache::" + banner.getId(), JSON.toJSONString(banner));
+        return banner;
     }
 
     @CachePut(value = "banneCache", key = "banners")

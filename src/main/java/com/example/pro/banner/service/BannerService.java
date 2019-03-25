@@ -8,7 +8,7 @@ public interface BannerService {
 
     Banner findById(Integer id);
 
-    Integer create(Banner banner);
+    Banner create(Banner banner);
 
     Integer modify(Banner banner);
 

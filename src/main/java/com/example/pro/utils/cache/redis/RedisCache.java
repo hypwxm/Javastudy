@@ -56,7 +56,7 @@ public class RedisCache extends CachingConfigurerSupport {
                 .cacheDefaults(redisCacheConfiguration).build();
     }
 
-    @Bean
+    @Bean(name = "redisTemplate")
     @ConditionalOnMissingBean
     public RedisTemplate<String, Object> redisTemplate(RedisConnectionFactory factory) {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
@@ -78,4 +78,3 @@ public class RedisCache extends CachingConfigurerSupport {
         return new FastJsonRedisSerializer<>(Object.class);
     }
 }
-

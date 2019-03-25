@@ -32,6 +32,8 @@ public class FastJsonRedisSerializer<T> implements RedisSerializer<T> {
         if (bytes == null || bytes.length <= 0) {
             return null;
         }
+        // ParserConfig.getGlobalInstance().addAccept("com.example.pro.banner.entity.Banner"); 
+
         String str = new String(bytes, DEFAULT_CHARSET);
         return (T) JSON.parseObject(str, clazz);
     }

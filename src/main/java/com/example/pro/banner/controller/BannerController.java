@@ -53,8 +53,8 @@ public class BannerController {
     public ApiResult addBanner(@RequestBody Banner banner) {
         // TODO: process POST request
 
-        Integer pk = bannerService.create(banner);
-        ApiResult res = ResultGenerator.successResult(pk);
+        bannerService.create(banner);
+        ApiResult res = ResultGenerator.successResult(banner);
 
         return res;
     }
