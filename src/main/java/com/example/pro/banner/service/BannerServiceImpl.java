@@ -17,15 +17,16 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service
-@CacheConfig(cacheNames = "bannerCache") // 定义这个注解，这个类里面的所有方法的缓存都属于这个缓存组，类方法的注解可以不加value，省事
+@CacheConfig(cacheNames = "bannerCache") //
+// 定义这个注解，这个类里面的所有方法的缓存都属于这个缓存组，类方法的注解可以不加value，省事
 public class BannerServiceImpl implements BannerService {
     @Autowired
     private BannerMapper bannerMapper;
 
-    @Autowired
+    // @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
-    @Cacheable
+    @Cacheable(key = "targetClass.getName() + '.' + methodName")
     public PageInfo<Banner> findAll(Banner banner) {
         System.out.println("若下面没出现“无缓存的时候调用”字样且能打印出数据表示测试成功");
 
@@ -54,7 +55,6 @@ public class BannerServiceImpl implements BannerService {
 
         redisTemplate.opsForValue().set("bannerCache::" + banner.getId(), JSON.toJSONString(banner));
 
-
         return bannerMapper.findById(id);
     }
 
@@ -63,7 +63,10 @@ public class BannerServiceImpl implements BannerService {
         bannerMapper.create(banner);
         System.out.println(JSON.toJSONString(banner));
 
-        redisTemplate.opsForValue().set("bannerCache::" + banner.getId(), JSON.toJSONString(banner));
+        // MyRedissonClient.getClient().
+
+        // redisTemplate.opsForValue().set("bannerCache::" + banner.getId(),
+        // JSON.toJSONString(banner));
         return banner;
     }
 
